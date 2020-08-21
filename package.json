@@ -1,0 +1,22 @@
+{
+  "name": "simple-uuids-microservice",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lilSpeedwagon/Simple-UUIDs-Microservice.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lilSpeedwagon/Simple-UUIDs-Microservice/issues"
+  },
+  "homepage": "https://github.com/lilSpeedwagon/Simple-UUIDs-Microservice#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}

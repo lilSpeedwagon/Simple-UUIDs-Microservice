@@ -1,19 +1,20 @@
 const log = require('./log');
 const http = require('http');
-
+const express = require('express');
 
 const port = 8080;
-const server = http.createServer((request, response) => {
-    response.writeHead(200, {'Content-Type': 'text/plain'});
-    response.write('Hello World!');
-    response.end();
+const app = express();
+
+
+app.use((request, response, next) =>    {
+    log.log("Incoming request \"" + request.url + "\".");
+    next();
 });
 
-server.listen(port, (error) => {
+app.listen(port, (error) => {
     if (error)    {
         return log.err(error);
     }
 
     log.log("server is listening on port " + port + "...");
 });
-
