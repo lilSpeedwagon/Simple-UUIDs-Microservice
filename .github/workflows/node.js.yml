@@ -1,0 +1,44 @@
+name: simple-uuid-microservice CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [10.x, 12.x, 14.x]
+
+    steps:
+    
+    - name: Set up work dir
+      run: |
+        echo "working directory is" $GITHUB_WORKSPACE
+        echo ::set-env name=WORKSPACE::$(echo $GITHUB_WORKSPACE)
+        cd $GITHUB_WORKSPACE
+          
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - run: npm ci
+    - run: npm run build --if-present
+    - run: npm test
+  
+    - name: Build and push Docker images
+      uses: docker/build-push-action@v1.1.0
+      with:
+        username: ${{ secrets.DOCKERHUB_LOGIN }}
+        password: ${{ secrets.DOCKERHUB_PASS }}
+        repository: ${{ secrets.DOCKERHUB_LOGIN }}/simple-uuid-microservice
+        tags: latest
+        path: ${{ env.WORKSPACE }}/
+        dockerfile: ./Dockerfile
+        push: true
