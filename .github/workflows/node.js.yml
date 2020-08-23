@@ -40,5 +40,5 @@ jobs:
         repository: ${{ secrets.DOCKERHUB_LOGIN }}/simple-uuid-microservice
         tags: latest
         path: ${{ env.WORKSPACE }}/
-        dockerfile: ./Dockerfile
+        dockerfile: ./DOCKERFILE
         push: true
