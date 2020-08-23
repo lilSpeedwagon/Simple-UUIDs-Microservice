@@ -28,6 +28,7 @@ var nBadRequests        = 0;
 var app = express();
 
 function isServerOK()   {
+    // There is no external connections or modules which could be in down state, so the service is always OK.
     return true;
 }
 
@@ -129,8 +130,8 @@ function getServerStatus()  {
 
 function generateUUID(name, type)   {
     let base = process.env.BASE_UUID;
-    if (base === undefined) {
-        log.warn("BASE_UUID env variable is undefined. Setting base uuid as null UUID.");
+    if (base === undefined || !uuid.validate(base)) {
+        log.warn("BASE_UUID env variable is undefined or invalid. Setting base uuid as null UUID.");
         base = UUID_NULL;
     }
 
