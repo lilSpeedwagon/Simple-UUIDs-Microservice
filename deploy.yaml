@@ -1,0 +1,18 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: base
+  name: simple-uuid-microservice-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: simple-uuid-microservice-deployment
+  template:
+    metadata:
+      labels:
+        app: simple-uuid-microservice-deployment
+    spec:
+      containers:
+      - name: simple-uuid-microservice-container
+        image: speeedwagon/simple-uuid-microservice
