@@ -34,11 +34,11 @@ function getHttpsServer()   {
     let server = null;
     try {
         let sertificate = getSertificate();
-        let pass = getPassword();
+        let key = getKey();
     
         const options = {
-            pfx: sertificate,
-            passphrase: pass
+            cert: sertificate,
+            key: key
         };
     
         server = https.createServer(options, app);
@@ -51,14 +51,18 @@ function getHttpsServer()   {
 
 function getSertificate()   {
     try   {
-        return fs.readFileSync("./cert.pfx")
+        return fs.readFileSync("./simple-uuid-service.cert")
     }   catch(e)   {
         throw("Cannot load sertificate on path " + e.path);
     }
 }
 
-function getPassword()  {
-    return "password1234";
+function getKey()  {
+    try   {
+        return fs.readFileSync("./simple-uuid-service.key")
+    }   catch(e)   {
+        throw("Cannot load sertificate on path " + e.path);
+    }
 }
 
 
