@@ -34,17 +34,26 @@ function getHttpsServer()   {
     let server = null;
     try {
         let sertificate = getSertificate();
+<<<<<<< HEAD
         let pass = getPassword();
     
         const options = {
             pfx: sertificate,
             passphrase: pass
+=======
+        let key = getKey();
+    
+        const options = {
+            cert: sertificate,
+            key: key
+>>>>>>> ec67b0a6d2d0ed7d6150b8fe3e6244659f3ae074
         };
     
         server = https.createServer(options, app);
     } catch(e)  {
         log.err("Cannot init https server: " + e + ".");
     }
+<<<<<<< HEAD
 
     return server;
 }
@@ -59,6 +68,26 @@ function getSertificate()   {
 
 function getPassword()  {
     return "password1234";
+=======
+
+    return server;
+}
+
+function getSertificate()   {
+    try   {
+        return fs.readFileSync("./simple-uuid-service.cert")
+    }   catch(e)   {
+        throw("Cannot load sertificate on path " + e.path);
+    }
+}
+
+function getKey()  {
+    try   {
+        return fs.readFileSync("./simple-uuid-service.key")
+    }   catch(e)   {
+        throw("Cannot load sertificate on path " + e.path);
+    }
+>>>>>>> ec67b0a6d2d0ed7d6150b8fe3e6244659f3ae074
 }
 
 

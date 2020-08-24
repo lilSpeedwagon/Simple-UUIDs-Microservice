@@ -3,5 +3,8 @@ WORKDIR /usr/src/app
 COPY ./package*.json ./
 RUN npm install
 COPY . .
+ENV BASE_UUID=d6cd0e72-62a2-4892-a1f7-91e128fea247
+ENV LOG_PATH=simple-uuid-service.log
+RUN openssl req -batch -nodes -new -x509 -keyout simple-uuid-service.key -out simple-uuid-service.cert
 EXPOSE 8080
 CMD ["node", "index.js"]
