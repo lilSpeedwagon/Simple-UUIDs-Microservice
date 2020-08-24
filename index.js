@@ -1,6 +1,8 @@
 const log       = require("./log");
 const express   = require("express");
+const https     = require("https");
 const uuid      = require("uuid");
+const fs        = require("fs");
 
 
 // server consts
@@ -26,25 +28,50 @@ var nBadRequests        = 0;
 
 // server instance
 var app = express();
+var httpsServer = getHttpsServer();
 
-function isServerOK()   {
-    // There is no external connections or modules which could be in down state, so the service is always OK.
-    return true;
-}
-
-function sendStatus(response, status)   {
-    log.log("Response status: " + status + ".");
-    response.sendStatus(status);
-}
-
-function getRequestVariable(request, varName)   {
-    let value = request.query[varName];
-    if (value === undefined) {
-        value = "";
+function getHttpsServer()   {
+    let server = null;
+    try {
+        let sertificate = getSertificate();
+        let pass = getPassword();
+    
+        const options = {
+            pfx: sertificate,
+            passphrase: pass
+        };
+    
+        server = https.createServer(options, app);
+    } catch(e)  {
+        log.err("Cannot init https server: " + e + ".");
     }
-    return value;
+
+    return server;
 }
 
+function getSertificate()   {
+    try   {
+        return fs.readFileSync("./cert.pfx")
+    }   catch(e)   {
+        throw("Cannot load sertificate on path " + e.path);
+    }
+}
+
+function getPassword()  {
+    return "password1234";
+}
+
+
+// start listening
+if (httpsServer != null)    {
+    httpsServer.listen(PORT, (error) => {
+        if (error)    {
+            return log.err(error);
+        }
+    
+        log.log("Server is listening on port " + PORT + "...");
+    });
+}
 
 // request preprocessing
 app.use((request, response, next) =>    {
@@ -108,17 +135,12 @@ app.use((error, request, response, next) => {
 });
 
 
-// start listening
-app.listen(PORT, (error) => {
-    if (error)    {
-        return log.err(error);
-    }
+// server utility funcitons
+function isServerOK()   {
+    // There is no external connections or modules which could be in down state, so the service is always OK.
+    return true;
+}
 
-    log.log("Server is listening on port " + PORT + "...");
-});
-
-
-// internal logic
 function getServerStatus()  {
     let status = isServerOK() ? STATUS_OK : STATUS_BAD;
     if (status == STATUS_BAD)   {
@@ -128,6 +150,21 @@ function getServerStatus()  {
     return status;
 }
 
+function sendStatus(response, status)   {
+    log.log("Response status: " + status + ".");
+    response.sendStatus(status);
+}
+
+function getRequestVariable(request, varName)   {
+    let value = request.query[varName];
+    if (value === undefined) {
+        value = "";
+    }
+    return value;
+}
+
+
+// internal logic of service
 function generateUUID(name, type)   {
     let base = process.env.BASE_UUID;
     if (base === undefined || !uuid.validate(base)) {
